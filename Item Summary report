@@ -1,0 +1,69 @@
+SELECT 
+i.Item_ID,
+i.ItemQty,
+ii.Custom_Inv_ID,
+ii.Line_Total,
+ii.Qty As Sold_Qty,
+gi.grn_CustomID,
+gi.CostPrice,
+gi.Qty,
+g.supp_Name,
+sac.SA_CustomID,
+sac.NewQty,
+sac.CostPrice,
+sacn.User_ID,
+sacn.SA_Date,
+sri.Return_Qty,
+sri.Custom_Return_ID,
+inv.Date,
+inv.Custom_inv_ID
+From items i 
+LEFT join 
+(SELECT 
+Custom_Inv_ID,
+Line_Total,
+Qty,
+item_ID
+FROM invoice_items  GROUP BY Item_ID,Custom_Inv_ID) ii 
+ON i.Item_ID = ii.Item_ID 
+LEFT join  
+(SELECT GRN_CustomID,
+CostPrice,
+Qty,
+item_ID 
+FROM grn_items  GROUP BY Item_ID,GRN_CustomID) gi 
+ON i.Item_ID = gi.Item_ID 
+LEFT join 
+(SELECT 
+Supp_Name,
+GRN_CustomID
+FROM grn  ) g 
+ON gi.GRN_CustomID = g.GRN_CustomID 
+LEFT join 
+(SELECT SA_CustomID,
+NewQty,
+CostPrice,
+Item_ID
+FROM stock_adjustment_changeqty
+GROUP BY Item_ID) sac ON i.item_id = sac.item_id 
+LEFT join
+(SELECT User_ID,
+SA_Date,
+SA_CustomID  
+FROM
+stock_adjustmentn ) sacn ON 
+sac.SA_CustomID = sacn.SA_CustomID
+LEFT join
+(SELECT Return_Qty,Custom_Return_ID,Item_ID  FROM sales_return_items  GROUP BY Item_ID) sri On i.Item_ID = sri.Item_ID
+LEFT join
+(SELECT Cust_Name,Custom_ReturnID  FROM sales_return ) sr On sri.Custom_Return_ID = sr.Custom_ReturnID
+LEFT join 
+(SELECT Custom_Inv_ID,Date  FROM invoice  group by Custom_Inv_ID) inv On inv.Custom_inv_ID = ii.custom_inv_Id
+where ii.item_ID = 'PS2SC103'
+group by ii.custom_inv_Id,gi.grn_CustomID
+
+
+
+
+
+
