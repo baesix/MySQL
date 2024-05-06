@@ -16,4 +16,4 @@
 #### Advantages
 1. Prevent From Deta Loss
 2. No Need hard codings
-3. Can Join More accurately
+
